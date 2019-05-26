@@ -7,12 +7,15 @@ import (
 )
 
 type (
-	listenerFunc = func(ctx context.Context, msg *pubsub.Message)
+	// A Listener function determines how each incoming Pub/Sub message is processed.
+	Listener = func(ctx context.Context, msg *pubsub.Message)
 
-	subscriber struct {
+	// Subscribes subscribe to a specified Pub/Sub topic and process each incoming message in accordance with the
+	// supplied listener function.
+	Subscriber struct {
 		topic        *pubsub.Topic
 		subscription *pubsub.Subscription
-		listener     listenerFunc
+		listener     Listener
 	}
 
 	// Subscriber configuration
@@ -20,7 +23,7 @@ type (
 		Project      string
 		Topic        string
 		Subscription string
-		Listener     listenerFunc
+		Listener     Listener
 	}
 )
 
@@ -40,10 +43,10 @@ func (c *SubscriberConfig) validate() error {
 	return nil
 }
 
-// Start the publisher. When started, the publisher listens on its topic and applies its listener function to each
+// Start the Publisher. When started, the Publisher listens on its topic and applies its listener function to each
 // incoming message.
-func (s *subscriber) Start() {
-	log.Printf("Starting a subscriber on topic %s", s.topic.String())
+func (s *Subscriber) Start() {
+	log.Printf("Starting a Subscriber on topic %s", s.topic.String())
 
 	ctx := context.Background()
 	err := s.subscription.Receive(ctx, s.listener)
@@ -53,7 +56,7 @@ func (s *subscriber) Start() {
 }
 
 // Create a new Subscriber from a SubscriberConfig
-func NewSubscriber(config *SubscriberConfig) (*subscriber, error) {
+func NewSubscriber(config *SubscriberConfig) (*Subscriber, error) {
 	ctx := context.Background()
 
 	err := config.validate()
@@ -76,7 +79,7 @@ func NewSubscriber(config *SubscriberConfig) (*subscriber, error) {
 		return nil, err
 	}
 
-	return &subscriber{
+	return &Subscriber{
 		topic:        topic,
 		subscription: sub,
 		listener:     config.Listener,

@@ -7,18 +7,20 @@ import (
 )
 
 type (
-	notifierFunc = func(*pubsub.PublishResult)
+	// A Notifier function determines how message publishing results are processed.
+	Notifier = func(*pubsub.PublishResult)
 
-	publisher struct {
+	// Publishers publish messages on a specified Pub/Sub topic.
+	Publisher struct {
 		topic    *pubsub.Topic
-		notifier notifierFunc
+		notifier Notifier
 	}
 
-	// Publisher configuration
+	// Publisher configuration.
 	PublisherConfig struct {
 		Project  string
 		Topic    string
-		Notifier notifierFunc
+		Notifier Notifier
 	}
 )
 
@@ -34,8 +36,8 @@ func (c *PublisherConfig) validate() error {
 	return nil
 }
 
-// Create a new publisher from a PublisherConfig
-func NewPublisher(config *PublisherConfig) (*publisher, error) {
+// Create a new Publisher from a PublisherConfig.
+func NewPublisher(config *PublisherConfig) (*Publisher, error) {
 	ctx := context.Background()
 
 	err := config.validate()
@@ -53,14 +55,14 @@ func NewPublisher(config *PublisherConfig) (*publisher, error) {
 		return nil, err
 	}
 
-	return &publisher{
+	return &Publisher{
 		topic:    topic,
 		notifier: config.Notifier,
 	}, nil
 }
 
-// Publish a data payload (as raw bytes) on the Publisher's topic
-func (p *publisher) Publish(data []byte) {
+// Publish the specified data payload (as raw bytes) on the Publisher's topic.
+func (p *Publisher) Publish(data []byte) {
 	ctx := context.Background()
 
 	log.Printf("Publishing a message to topic %s", p.topic.String())
