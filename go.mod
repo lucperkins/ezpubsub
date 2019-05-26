@@ -1,4 +1,4 @@
-module github.com/shear.io/shear
+module github.com/lucperkins/ezpubsub
 
 go 1.12
 
