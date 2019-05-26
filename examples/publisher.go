@@ -1,4 +1,4 @@
-package examples
+package main
 
 import (
 	"cloud.google.com/go/pubsub"
@@ -14,12 +14,6 @@ func notify(res *pubsub.PublishResult) {
 	log.Printf("Message with ID %s published", id)
 }
 
-func must(err error) {
-	if err != nil {
-		panic(err)
-	}
-}
-
 func main() {
 	publisherConfig := &ezpubsub.PublisherConfig{
 		Project: "...",
@@ -27,7 +21,9 @@ func main() {
 		Notifier: notify,
 	}
 	publisher, err := ezpubsub.NewPublisher(publisherConfig)
-	must(err)
+	if err != nil {
+		panic(err)
+	}
 
 	msg := []byte("Hello world")
 	publisher.Publish(msg)

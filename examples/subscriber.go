@@ -1,4 +1,4 @@
-package examples
+package main
 
 import (
 	"cloud.google.com/go/pubsub"
@@ -11,6 +11,12 @@ func processMessage(_ context.Context, msg *pubsub.Message) {
 	log.Printf("Message received with an ID of %s and the following payload: %s", msg.ID, string(msg.Data))
 }
 
+func must(err error) {
+	if err != nil {
+		panic(err)
+	}
+}
+
 func main() {
 	subscriberConfig := &ezpubsub.SubscriberConfig{
 		Project: "...",
@@ -19,7 +25,9 @@ func main() {
 		Listener: processMessage,
 	}
 	subscriber, err := ezpubsub.NewSubscriber(subscriberConfig)
-	must(err)
+	if err != nil {
+		panic(err)
+	}
 
 	subscriber.Start()
 }
