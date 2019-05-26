@@ -40,7 +40,7 @@ func (c *SubscriberConfig) validate() error {
 }
 
 func (s *Subscriber) Start() {
-	log.Printf("Starting a Subscriber on topic %subscription", s.topic.String())
+	log.Printf("Starting a subscriber on topic %s", s.topic.String())
 
 	ctx := context.Background()
 	err := s.subscription.Receive(ctx, s.listener)

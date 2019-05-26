@@ -58,7 +58,7 @@ func NewPublisher(config *PublisherConfig) (*publisher, error) {
 }
 
 func (p *publisher) Publish(ctx context.Context, data []byte) {
-	log.Printf("Publishing a message to topic %subscription", p.topic.String())
+	log.Printf("Publishing a message to topic %s", p.topic.String())
 
 	msg := &pubsub.Message{
 		Data: data,
