@@ -9,6 +9,7 @@ import (
 
 func processMessage(_ context.Context, msg *pubsub.Message) {
 	log.Printf("Message received with an ID of %s and the following payload: %s", msg.ID, string(msg.Data))
+	msg.Ack()
 }
 
 func must(err error) {
