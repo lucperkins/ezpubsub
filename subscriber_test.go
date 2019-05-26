@@ -11,11 +11,17 @@ const (
 	subscription = "my-sub"
 )
 
-func receive(_ context.Context, msg *pubsub.Message) {}
+func listen(_ context.Context, _ *pubsub.Message) {}
 
 func TestSubscribe(t *testing.T) {
 	is := assert.New(t)
-	sub, err := NewSubscriber(project, topic, subscription, receive)
+	cfg := &SubscriberConfig{
+		Project: project,
+		Topic: topic,
+		Subscription: subscription,
+		Listener: listen,
+	}
+	sub, err := NewSubscriber(cfg)
 	is.NoError(err)
 	is.NotNil(sub)
 }

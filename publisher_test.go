@@ -12,7 +12,11 @@ const (
 
 func TestPublisher(t *testing.T) {
 	is := assert.New(t)
-	pub, err := NewPublisher(project, topic)
+	cfg := &PublisherConfig{
+		Project: project,
+		Topic: topic,
+	}
+	pub, err := NewPublisher(cfg)
 	is.NoError(err)
 	is.NotNil(pub)
 }
