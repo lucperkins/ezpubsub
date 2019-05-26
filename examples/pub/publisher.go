@@ -1,4 +1,4 @@
-package pub
+package main
 
 import (
 	"cloud.google.com/go/pubsub"
