@@ -8,14 +8,14 @@ import (
 
 type listener = func(context.Context, *pubsub.Message)
 
-type subscriber struct {
+type Subscriber struct {
 	topic        *pubsub.Topic
 	subscription *pubsub.Subscription
 	listener     listener
 }
 
-func (s *subscriber) Start() {
-	log.Printf("Starting a subscriber on topic %s", s.topic.String())
+func (s *Subscriber) Start() {
+	log.Printf("Starting a Subscriber on topic %s", s.topic.String())
 
 	ctx := context.Background()
 	err := s.subscription.Receive(ctx, s.listener)
@@ -24,7 +24,7 @@ func (s *subscriber) Start() {
 	}
 }
 
-func NewSubscriber(projectName, topicName, subscriptionName string, listener listener) (*subscriber, error) {
+func NewSubscriber(projectName, topicName, subscriptionName string, listener listener) (*Subscriber, error) {
 	ctx := context.Background()
 
 	client, err := newClient(projectName)
@@ -42,7 +42,7 @@ func NewSubscriber(projectName, topicName, subscriptionName string, listener lis
 		return nil, err
 	}
 
-	return &subscriber{
+	return &Subscriber{
 		topic:        topic,
 		subscription: sub,
 		listener: listener,
@@ -50,6 +50,8 @@ func NewSubscriber(projectName, topicName, subscriptionName string, listener lis
 }
 
 func (p *Publisher) Publish(ctx context.Context, data []byte) {
+	log.Printf("Publishing a message to topic %s", p.topic.String())
+
 	msg := &pubsub.Message{
 		Data: data,
 	}

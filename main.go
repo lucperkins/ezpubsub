@@ -3,6 +3,7 @@ package main
 import (
 	"cloud.google.com/go/pubsub"
 	"context"
+	"flag"
 	"fmt"
 	"github.com/shear.io/shear/pkg/messaging"
 )
@@ -24,16 +25,24 @@ func receive(_ context.Context, msg *pubsub.Message) {
 	msg.Ack()
 }
 
+var process string
+
+func init() {
+	flag.StringVar(&process, "process", "subscriber", "The type of process to start")
+}
+
 func main() {
-	sub, err := messaging.NewSubscriber(project, topic, subscription, receive)
-	panicOnErr(err)
+	flag.Parse()
 
-	go func() {
+	if process == "subscriber" {
+		sub, err := messaging.NewSubscriber(project, topic, subscription, receive)
+		panicOnErr(err)
 		sub.Start()
-	}()
+	}
 
-	pub, err := messaging.NewPublisher(project, topic)
-	panicOnErr(err)
-
-	pub.Publish(context.Background(), []byte("Hello world"))
+	if process == "publisher" {
+		pub, err := messaging.NewPublisher(project, topic)
+		panicOnErr(err)
+		pub.Publish(context.Background(), []byte("Hello world"))
+	}
 }
