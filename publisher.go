@@ -3,6 +3,7 @@ package ezpubsub
 import (
 	"cloud.google.com/go/pubsub"
 	"context"
+	"log"
 )
 
 type (
@@ -136,4 +137,23 @@ func (p *Publisher) asyncWorker(messages []*pubsub.Message, done chan bool) {
 			done <- true
 		}
 	}
+}
+
+func ExamplePublisher() {
+	publisherConfig := &PublisherConfig{
+		Project: "...",
+		Topic: "...",
+		Notifier: func(res *pubsub.PublishResult) {
+			id, _ := res.Get(context.Background())
+			log.Printf("Message with ID %s published", id)
+		},
+	}
+
+	publisher, err := NewPublisher(publisherConfig)
+	if err != nil {
+		log.Fatalf("Publisher creation error: %s", err)
+	}
+
+	msg := []byte("Hello world")
+	publisher.Publish(msg)
 }
