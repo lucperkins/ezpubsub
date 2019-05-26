@@ -18,7 +18,7 @@ type (
 		listener     Listener
 	}
 
-	// Subscriber configuration
+	// Subscriber configuration. All fields except `Listener` are mandatory.
 	SubscriberConfig struct {
 		Project      string
 		Topic        string
