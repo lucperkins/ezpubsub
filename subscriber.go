@@ -8,7 +8,7 @@ import (
 
 type (
 	// A Listener function determines how each incoming Pub/Sub message is processed.
-	Listener = func(ctx context.Context, msg *pubsub.Message)
+	Listener = func(context.Context, *pubsub.Message)
 
 	// Subscribes subscribe to a specified Pub/Sub topic and process each incoming message in accordance with the
 	// supplied listener function.
