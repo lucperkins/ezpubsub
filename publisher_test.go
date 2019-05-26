@@ -2,8 +2,8 @@ package ezpubsub
 
 import (
 	"cloud.google.com/go/pubsub"
-	"github.com/stretchr/testify/assert"
 	"context"
+	"github.com/stretchr/testify/assert"
 	"log"
 	"testing"
 )
@@ -32,7 +32,7 @@ func TestPublisher(t *testing.T) {
 func ExamplePublisher() {
 	publisherConfig := &PublisherConfig{
 		Project: "...",
-		Topic: "...",
+		Topic:   "...",
 		Notifier: func(res *pubsub.PublishResult) {
 			id, _ := res.Get(context.Background())
 			log.Printf("Message with ID %s published", id)

@@ -38,8 +38,8 @@ func TestSubscribe(t *testing.T) {
 
 func ExampleSubscriber() {
 	subscriberConfig := &SubscriberConfig{
-		Project: "...",
-		Topic: "...",
+		Project:      "...",
+		Topic:        "...",
 		Subscription: "...",
 		Listener: func(_ context.Context, msg *pubsub.Message) {
 			log.Printf("Message received (id: %s, payload: %s)", msg.Data, string(msg.Data))

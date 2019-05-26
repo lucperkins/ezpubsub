@@ -10,3 +10,10 @@ build:
 test:
 	go test -v ./...
 
+fmt:
+	gofmt -w .
+
+tidy:
+	go mod tidy
+
+spruce: fmt tidy
