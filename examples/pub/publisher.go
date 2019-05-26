@@ -18,8 +18,8 @@ func notify(res *pubsub.PublishResult) {
 
 func main() {
 	publisherConfig := &ezpubsub.PublisherConfig{
-		Project: "...",
-		Topic: "...",
+		Project:  "...",
+		Topic:    "...",
 		Notifier: notify,
 	}
 	publisher, err := ezpubsub.NewPublisher(publisherConfig)

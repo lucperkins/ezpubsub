@@ -19,10 +19,10 @@ func must(err error) {
 
 func main() {
 	subscriberConfig := &ezpubsub.SubscriberConfig{
-		Project: "...",
-		Topic: "...",
+		Project:      "...",
+		Topic:        "...",
 		Subscription: "...",
-		Listener: processMessage,
+		Listener:     processMessage,
 	}
 	subscriber, err := ezpubsub.NewSubscriber(subscriberConfig)
 	if err != nil {

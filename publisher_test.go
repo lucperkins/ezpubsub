@@ -7,14 +7,14 @@ import (
 
 const (
 	project = "ezpub"
-	topic = "ezpub-test-topic"
+	topic   = "ezpub-test-topic"
 )
 
 func TestPublisher(t *testing.T) {
 	is := assert.New(t)
 	cfg := &PublisherConfig{
 		Project: project,
-		Topic: topic,
+		Topic:   topic,
 	}
 	pub, err := NewPublisher(cfg)
 	is.NoError(err)

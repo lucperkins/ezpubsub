@@ -16,10 +16,10 @@ func listen(_ context.Context, _ *pubsub.Message) {}
 func TestSubscribe(t *testing.T) {
 	is := assert.New(t)
 	cfg := &SubscriberConfig{
-		Project: project,
-		Topic: topic,
+		Project:      project,
+		Topic:        topic,
 		Subscription: subscription,
-		Listener: listen,
+		Listener:     listen,
 	}
 	sub, err := NewSubscriber(cfg)
 	is.NoError(err)
