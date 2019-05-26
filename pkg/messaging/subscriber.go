@@ -7,19 +7,19 @@ import (
 )
 
 type (
-	listener = func(ctx context.Context, msg *pubsub.Message)
+	listenerFunc = func(ctx context.Context, msg *pubsub.Message)
 
 	Subscriber struct {
-		t *pubsub.Topic
-		s *pubsub.Subscription
-		l listener
+		topic        *pubsub.Topic
+		subscription *pubsub.Subscription
+		listener     listenerFunc
 	}
 
 	SubscriberConfig struct {
-		Project string
-		Topic string
+		Project      string
+		Topic        string
 		Subscription string
-		Listener listener
+		Listener     listenerFunc
 	}
 )
 
@@ -40,10 +40,10 @@ func (c *SubscriberConfig) validate() error {
 }
 
 func (s *Subscriber) Start() {
-	log.Printf("Starting a Subscriber on t %s", s.t.String())
+	log.Printf("Starting a Subscriber on topic %subscription", s.topic.String())
 
 	ctx := context.Background()
-	err := s.s.Receive(ctx, s.l)
+	err := s.subscription.Receive(ctx, s.listener)
 	if err != nil {
 		panic(err)
 	}
@@ -68,8 +68,8 @@ func NewSubscriber(config *SubscriberConfig) (*Subscriber, error) {
 	}
 
 	return &Subscriber{
-		t: topic,
-		s: sub,
-		l: config.Listener,
+		topic:        topic,
+		subscription: sub,
+		listener:     config.Listener,
 	}, nil
 }

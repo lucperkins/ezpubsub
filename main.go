@@ -22,6 +22,7 @@ func panicOnErr(err error) {
 }
 
 func receive(_ context.Context, msg *pubsub.Message) {
+	fmt.Print("Message received")
 	fmt.Printf("Message received: %s", string(msg.Data))
 	msg.Ack()
 }

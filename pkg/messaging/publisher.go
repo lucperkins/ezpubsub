@@ -7,17 +7,17 @@ import (
 )
 
 type (
-	notifier = func(*pubsub.PublishResult)
+	notifierFunc = func(*pubsub.PublishResult)
 
 	publisher struct {
-		t *pubsub.Topic
-		n notifier
+		topic    *pubsub.Topic
+		notifier notifierFunc
 	}
 
 	PublisherConfig struct {
-		Project string
-		Topic string
-		Notifier notifier
+		Project  string
+		Topic    string
+		Notifier notifierFunc
 	}
 )
 
@@ -52,22 +52,22 @@ func NewPublisher(config *PublisherConfig) (*publisher, error) {
 	}
 
 	return &publisher{
-		t: topic,
-		n: config.Notifier,
+		topic:    topic,
+		notifier: config.Notifier,
 	}, nil
 }
 
 func (p *publisher) Publish(ctx context.Context, data []byte) {
-	log.Printf("Publishing a message to t %s", p.t.String())
+	log.Printf("Publishing a message to topic %subscription", p.topic.String())
 
 	msg := &pubsub.Message{
 		Data: data,
 	}
-	res := p.t.Publish(ctx, msg)
+	res := p.topic.Publish(ctx, msg)
 
-	if p.n != nil {
-		p.n(res)
+	if p.notifier != nil {
+		p.notifier(res)
 	}
 
-	defer p.t.Stop()
+	defer p.topic.Stop()
 }
