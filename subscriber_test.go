@@ -24,4 +24,13 @@ func TestSubscribe(t *testing.T) {
 	sub, err := NewSubscriber(cfg)
 	is.NoError(err)
 	is.NotNil(sub)
+
+	_, err = NewSubscriber(&SubscriberConfig{Topic: topic, Subscription: subscription, Listener: listen})
+	is.EqualError(err, ErrNoProjectSpecified.Error())
+	_, err = NewSubscriber(&SubscriberConfig{Project: project, Subscription: subscription, Listener: listen})
+	is.EqualError(err, ErrNoTopicSpecified.Error())
+	_, err = NewSubscriber(&SubscriberConfig{Project: project, Topic: topic, Subscription: subscription})
+	is.EqualError(err, ErrNoListenerSpecified.Error())
+	_, err = NewSubscriber(&SubscriberConfig{})
+	is.EqualError(err, ErrNoProjectSpecified.Error())
 }

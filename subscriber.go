@@ -52,6 +52,11 @@ func (s *Subscriber) Start() {
 func NewSubscriber(config *SubscriberConfig) (*Subscriber, error) {
 	ctx := context.Background()
 
+	err := config.validate()
+	if err != nil {
+		return nil, err
+	}
+
 	client, err := newClient(config.Project)
 	if err != nil {
 		return nil, err
