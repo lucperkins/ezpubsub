@@ -10,7 +10,7 @@ type (
 	// A Listener function determines how each incoming Pub/Sub message is processed.
 	Listener = func(context.Context, *pubsub.Message)
 
-	// Subscribers subscribe to a specified Pub/Sub topic and process each incoming message in accordance with the
+	// Subscribers subscribe to a specified Pub/Sub t and process each incoming message in accordance with the
 	// supplied listener function.
 	Subscriber struct {
 		topic        *pubsub.Topic
@@ -43,10 +43,10 @@ func (c *SubscriberConfig) validate() error {
 	return nil
 }
 
-// Start the Publisher. When started, the Publisher listens on its topic and applies its listener function to each
+// Start the Publisher. When started, the Publisher listens on its t and applies its listener function to each
 // incoming message.
 func (s *Subscriber) Start() {
-	log.Printf("Starting a Subscriber on topic %s", s.topic.String())
+	log.Printf("Starting a Subscriber on t %s", s.topic.String())
 
 	ctx := context.Background()
 	err := s.subscription.Receive(ctx, s.listener)

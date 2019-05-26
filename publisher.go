@@ -4,23 +4,20 @@ import (
 	"cloud.google.com/go/pubsub"
 	"context"
 	"fmt"
+	"sync"
 )
 
 type (
-	// A `Notifier` function determines how message publishing results are processed.
-	Notifier = func(*pubsub.PublishResult)
-
-	// `Publisher`s publish messages on a specified Pub/Sub topic.
+	// `Publisher`s publish messages on a specified Pub/Sub t.
 	Publisher struct {
-		topic    *pubsub.Topic
-		notifier Notifier
+		sync.Mutex
+		t *pubsub.Topic
 	}
 
 	// Publisher configuration. All fields except `Notifier` are mandatory.
 	PublisherConfig struct {
 		Project  string
 		Topic    string
-		Notifier Notifier
 	}
 )
 
@@ -55,46 +52,19 @@ func NewPublisher(config *PublisherConfig) (*Publisher, error) {
 	}
 
 	return &Publisher{
-		topic:    topic,
-		notifier: config.Notifier,
+		t: topic,
 	}, nil
 }
 
-// Publish the specified `data` payload (as raw bytes) on the `Publisher`'s topic.
+// Publish the specified `data` payload (as raw bytes) on the `Publisher`'s t.
 func (p *Publisher) Publish(data []byte) {
 	ctx := context.Background()
+	defer p.t.Stop()
 
 	msg := &pubsub.Message{
 		Data: data,
 	}
-	res := p.topic.Publish(ctx, msg)
-
-	if p.notifier != nil {
-		p.notifier(res)
-	}
-
-	defer p.topic.Stop()
-}
-
-// Publish a batch of messages synchronously.
-func (p *Publisher) BatchPublishSync(payloads [][]byte) {
-	msgs := convertDataToMessages(payloads)
-
-	for _, m := range msgs {
-		res := p.publishMessage(m)
-		p.notify(res)
-	}
-}
-
-// Publish a batch of messages asynchronously.
-func (p *Publisher) BatchPublishAsync(payloads [][]byte) {
-	ms := convertDataToMessages(payloads)
-
-	done := make(chan bool, 1)
-
-	go p.asyncWorker(ms, done)
-
-	<-done
+	p.t.Publish(ctx, msg)
 }
 
 // Converts a slice of raw data payloads into a slice of Messages
@@ -110,19 +80,6 @@ func convertDataToMessages(payloads [][]byte) []*pubsub.Message {
 	return msgs
 }
 
-// Publish a message on the Publisher's topic.
-func (p *Publisher) publishMessage(msg *pubsub.Message) *pubsub.PublishResult {
-	ctx := context.Background()
-	return p.topic.Publish(ctx, msg)
-}
-
-// Apply the notification function if one is specified.
-func (p *Publisher) notify(res *pubsub.PublishResult) {
-	if p.notifier != nil {
-		p.notifier(res)
-	}
-}
-
 // If the number processed equals the total number of messages in the batch, notify the channel that the processing is
 // done.
 func notifyWhenDone(published, queue int, done chan bool) {
@@ -133,6 +90,7 @@ func notifyWhenDone(published, queue int, done chan bool) {
 
 // A channel-based async worker for batch message publishing.
 func (p *Publisher) asyncWorker(messages []*pubsub.Message, done chan bool) {
+	ctx := context.Background()
 	queueLength := len(messages)
 
 	fmt.Printf("Queue length: %d", queueLength)
@@ -143,8 +101,7 @@ func (p *Publisher) asyncWorker(messages []*pubsub.Message, done chan bool) {
 
 		fmt.Printf("Num published: %d", numPublished)
 
-		res := p.publishMessage(m)
-		p.notify(res)
+		p.t.Publish(ctx, m)
 
 		notifyWhenDone(numPublished, queueLength, done)
 	}
