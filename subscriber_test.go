@@ -4,6 +4,7 @@ import (
 	"cloud.google.com/go/pubsub"
 	"context"
 	"github.com/stretchr/testify/assert"
+	"log"
 	"testing"
 )
 
@@ -33,4 +34,22 @@ func TestSubscribe(t *testing.T) {
 	is.EqualError(err, ErrNoListenerSpecified.Error())
 	_, err = NewSubscriber(&SubscriberConfig{})
 	is.EqualError(err, ErrNoProjectSpecified.Error())
+}
+
+func ExampleSubscriber() {
+	subscriberConfig := &SubscriberConfig{
+		Project: "...",
+		Topic: "...",
+		Subscription: "...",
+		Listener: func(_ context.Context, msg *pubsub.Message) {
+			log.Printf("Message received (id: %s, payload: %s)", msg.Data, string(msg.Data))
+		},
+	}
+
+	subscriber, err := NewSubscriber(subscriberConfig)
+	if err != nil {
+		log.Fatalf("Subscriber creation error: %s", err)
+	}
+
+	subscriber.Start()
 }
