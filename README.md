@@ -6,7 +6,9 @@
 
 ## Why?
 
-The [`cloud.google.com/go/pubsub`](https://godoc.org/cloud.google.com/go/pubsub) library is well done and complete but also fairly low level. `ezpubsub` makes it easier to do the ~80% of things you're most likely to do with the library, especially when using Google Cloud Pub/Sub. It also doesn't require you to ever deal with context.
+The [`cloud.google.com/go/pubsub`](https://godoc.org/cloud.google.com/go/pubsub) library is well done and complete but also fairly low level. `ezpubsub` makes it easier to do the ~80% of things you're most likely to do with the library, especially when using Google Cloud Pub/Sub in development and testing environments.
+
+`ezpubsub` features a small API surface area and doesn't require you to ever deal with context; if your use case requires context, use the core `pubsub` library.
 
 ## Core concepts
 
