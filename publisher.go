@@ -3,6 +3,7 @@ package ezpubsub
 import (
 	"cloud.google.com/go/pubsub"
 	"context"
+	"fmt"
 )
 
 type (
@@ -133,13 +134,17 @@ func notifyWhenDone(published, queue int, done chan bool) {
 // A channel-based async worker for batch message publishing.
 func (p *Publisher) asyncWorker(messages []*pubsub.Message, done chan bool) {
 	queueLength := len(messages)
+
+	fmt.Printf("Queue length: %d", queueLength)
 	numPublished := 0
 
 	for _, m := range messages {
+		numPublished += 1
+
+		fmt.Printf("Num published: %d", numPublished)
+
 		res := p.publishMessage(m)
 		p.notify(res)
-
-		numPublished += 1
 
 		notifyWhenDone(numPublished, queueLength, done)
 	}
