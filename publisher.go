@@ -122,6 +122,14 @@ func (p *Publisher) notify(res *pubsub.PublishResult) {
 	}
 }
 
+// If the number processed equals the total number of messages in the batch, notify the channel that the processing is
+// done.
+func notifyWhenDone(published, queue int, done chan bool) {
+	if published == queue {
+		done <- true
+	}
+}
+
 // A channel-based async worker for batch message publishing.
 func (p *Publisher) asyncWorker(messages []*pubsub.Message, done chan bool) {
 	queueLength := len(messages)
@@ -133,9 +141,7 @@ func (p *Publisher) asyncWorker(messages []*pubsub.Message, done chan bool) {
 
 		numPublished += 1
 
-		if numPublished == queueLength {
-			done <- true
-		}
+		notifyWhenDone(numPublished, queueLength, done)
 	}
 }
 
