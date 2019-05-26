@@ -6,45 +6,70 @@ import (
 	"log"
 )
 
-type listener = func(ctx context.Context, msg *pubsub.Message)
+type (
+	listener = func(ctx context.Context, msg *pubsub.Message)
 
-type Subscriber struct {
-	topic        *pubsub.Topic
-	subscription *pubsub.Subscription
-	listener     listener
+	Subscriber struct {
+		t *pubsub.Topic
+		s *pubsub.Subscription
+		l listener
+	}
+
+	SubscriberConfig struct {
+		Project string
+		Topic string
+		Subscription string
+		Listener listener
+	}
+)
+
+func (c *SubscriberConfig) validate() error {
+	if c.Project == "" {
+		return ErrNoProjectSpecified
+	}
+	if c.Topic == "" {
+		return ErrNoTopicSpecified
+	}
+	if c.Subscription == "" {
+		return ErrNoSubscriptionSpecified
+	}
+	if c.Listener == nil {
+		return ErrNoListenerSpecified
+	}
+	return nil
 }
 
 func (s *Subscriber) Start() {
-	log.Printf("Starting a Subscriber on t %s", s.topic.String())
+	log.Printf("Starting a Subscriber on t %s", s.t.String())
 
 	ctx := context.Background()
-	err := s.subscription.Receive(ctx, s.listener)
+	err := s.s.Receive(ctx, s.l)
 	if err != nil {
 		panic(err)
 	}
 }
 
-func NewSubscriber(projectName, topicName, subscriptionName string, listener listener) (*Subscriber, error) {
+func NewSubscriber(config *SubscriberConfig) (*Subscriber, error) {
 	ctx := context.Background()
 
-	client, err := newClient(projectName)
+	client, err := newClient(config.Project)
 	if err != nil {
 		return nil, err
 	}
 
-	topic, err := client.createTopic(ctx, topicName)
+	topic, err := client.createTopic(ctx, config.Topic)
 	if err != nil {
 		return nil, err
 	}
 
-	sub, err := client.createSubscription(ctx, subscriptionName, topic)
+	sub, err := client.createSubscription(ctx, config.Subscription, topic)
 	if err != nil {
 		return nil, err
 	}
 
 	return &Subscriber{
-		topic:        topic,
-		subscription: sub,
-		listener: listener,
+		t: topic,
+		s: sub,
+		l: config.Listener,
 	}, nil
 }

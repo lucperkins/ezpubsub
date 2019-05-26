@@ -41,7 +41,13 @@ func main() {
 	flag.Parse()
 
 	if process == "subscriber" {
-		sub, err := messaging.NewSubscriber(project, topic, subscription, receive)
+		cfg := &messaging.SubscriberConfig{
+			Project: project,
+			Topic: topic,
+			Subscription: subscription,
+			Listener: receive,
+		}
+		sub, err := messaging.NewSubscriber(cfg)
 		panicOnErr(err)
 		sub.Start()
 	}

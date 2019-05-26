@@ -3,7 +3,6 @@ package messaging
 import (
 	"cloud.google.com/go/pubsub"
 	"context"
-	"errors"
 	"log"
 )
 
@@ -24,11 +23,11 @@ type (
 
 func (c *PublisherConfig) validate() error {
 	if c.Project == "" {
-		return errors.New("no project specified")
+		return ErrNoProjectSpecified
 	}
 
 	if c.Topic == "" {
-		return errors.New("no t specified")
+		return ErrNoTopicSpecified
 	}
 
 	return nil
