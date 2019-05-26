@@ -1,4 +1,4 @@
-package main
+package pub
 
 import (
 	"cloud.google.com/go/pubsub"
@@ -10,7 +10,9 @@ import (
 func notify(res *pubsub.PublishResult) {
 	ctx := context.Background()
 	id, err := res.Get(ctx)
-	must(err)
+	if err != nil {
+		panic(err)
+	}
 	log.Printf("Message with ID %s published", id)
 }
 
