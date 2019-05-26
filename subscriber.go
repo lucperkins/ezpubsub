@@ -1,4 +1,4 @@
-package messaging
+package ezpubsub
 
 import (
 	"cloud.google.com/go/pubsub"
@@ -9,12 +9,13 @@ import (
 type (
 	listenerFunc = func(ctx context.Context, msg *pubsub.Message)
 
-	Subscriber struct {
+	subscriber struct {
 		topic        *pubsub.Topic
 		subscription *pubsub.Subscription
 		listener     listenerFunc
 	}
 
+	// Subscriber configuration
 	SubscriberConfig struct {
 		Project      string
 		Topic        string
@@ -39,7 +40,9 @@ func (c *SubscriberConfig) validate() error {
 	return nil
 }
 
-func (s *Subscriber) Start() {
+// Start the publisher. When started, the publisher listens on its topic and applies its listener function to each
+// incoming message.
+func (s *subscriber) Start() {
 	log.Printf("Starting a subscriber on topic %s", s.topic.String())
 
 	ctx := context.Background()
@@ -49,7 +52,8 @@ func (s *Subscriber) Start() {
 	}
 }
 
-func NewSubscriber(config *SubscriberConfig) (*Subscriber, error) {
+// Create a new Subscriber from a SubscriberConfig
+func NewSubscriber(config *SubscriberConfig) (*subscriber, error) {
 	ctx := context.Background()
 
 	err := config.validate()
@@ -72,7 +76,7 @@ func NewSubscriber(config *SubscriberConfig) (*Subscriber, error) {
 		return nil, err
 	}
 
-	return &Subscriber{
+	return &subscriber{
 		topic:        topic,
 		subscription: sub,
 		listener:     config.Listener,

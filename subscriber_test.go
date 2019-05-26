@@ -1,4 +1,4 @@
-package messaging
+package ezpubsub
 
 import (
 	"cloud.google.com/go/pubsub"

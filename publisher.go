@@ -1,4 +1,4 @@
-package messaging
+package ezpubsub
 
 import (
 	"cloud.google.com/go/pubsub"
@@ -14,6 +14,7 @@ type (
 		notifier notifierFunc
 	}
 
+	// Publisher configuration
 	PublisherConfig struct {
 		Project  string
 		Topic    string
@@ -33,6 +34,7 @@ func (c *PublisherConfig) validate() error {
 	return nil
 }
 
+// Create a new publisher from a PublisherConfig
 func NewPublisher(config *PublisherConfig) (*publisher, error) {
 	ctx := context.Background()
 
@@ -57,7 +59,10 @@ func NewPublisher(config *PublisherConfig) (*publisher, error) {
 	}, nil
 }
 
-func (p *publisher) Publish(ctx context.Context, data []byte) {
+// Publish a data payload (as raw bytes) on the Publisher's topic
+func (p *publisher) Publish(data []byte) {
+	ctx := context.Background()
+
 	log.Printf("Publishing a message to topic %s", p.topic.String())
 
 	msg := &pubsub.Message{

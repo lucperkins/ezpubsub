@@ -1,4 +1,7 @@
-package messaging
+// The ezpubsub library is a set of higher-level abstractions over the Go library for Google Cloud Pub/Sub.
+// It's built for convenience and intended to cover the vast majority of use cases. If your use case isn't covered,
+// You're advised to use official library.
+package ezpubsub
 
 import (
 	"cloud.google.com/go/pubsub"

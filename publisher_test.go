@@ -1,4 +1,4 @@
-package messaging
+package ezpubsub
 
 import (
 	"github.com/stretchr/testify/assert"
