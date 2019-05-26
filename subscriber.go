@@ -57,8 +57,6 @@ func (s *Subscriber) Start() {
 
 // Create a new Subscriber from a SubscriberConfig
 func NewSubscriber(config *SubscriberConfig) (*Subscriber, error) {
-	ctx := context.Background()
-
 	err := config.validate()
 	if err != nil {
 		return nil, err
@@ -69,12 +67,12 @@ func NewSubscriber(config *SubscriberConfig) (*Subscriber, error) {
 		return nil, err
 	}
 
-	topic, err := client.createTopic(ctx, config.Topic)
+	topic, err := client.createTopic(config.Topic)
 	if err != nil {
 		return nil, err
 	}
 
-	sub, err := client.createSubscription(ctx, config.Subscription, topic)
+	sub, err := client.createSubscription(config.Subscription, topic)
 	if err != nil {
 		return nil, err
 	}

@@ -25,7 +25,9 @@ func newClient(project string) (*client, error) {
 	}, nil
 }
 
-func (c *client) createTopic(ctx context.Context, topicName string) (*pubsub.Topic, error) {
+func (c *client) createTopic(topicName string) (*pubsub.Topic, error) {
+	ctx := context.Background()
+
 	topic := c.client.Topic(topicName)
 	exists, err := topic.Exists(ctx)
 	if err != nil {
@@ -42,7 +44,9 @@ func (c *client) createTopic(ctx context.Context, topicName string) (*pubsub.Top
 	return topic, nil
 }
 
-func (c *client) createSubscription(ctx context.Context, subscriptionName string, topic *pubsub.Topic) (*pubsub.Subscription, error) {
+func (c *client) createSubscription(subscriptionName string, topic *pubsub.Topic) (*pubsub.Subscription, error) {
+	ctx := context.Background()
+
 	s := c.client.Subscription(subscriptionName)
 	exists, err := s.Exists(ctx)
 	if err != nil {

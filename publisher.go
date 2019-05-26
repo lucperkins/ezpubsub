@@ -37,8 +37,6 @@ func (c *PublisherConfig) validate() error {
 
 // Create a new Publisher from a PublisherConfig.
 func NewPublisher(config *PublisherConfig) (*Publisher, error) {
-	ctx := context.Background()
-
 	err := config.validate()
 	if err != nil {
 		return nil, err
@@ -49,7 +47,7 @@ func NewPublisher(config *PublisherConfig) (*Publisher, error) {
 		return nil, err
 	}
 
-	topic, err := client.createTopic(ctx, config.Topic)
+	topic, err := client.createTopic(config.Topic)
 	if err != nil {
 		return nil, err
 	}
