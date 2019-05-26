@@ -6,6 +6,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/shear.io/shear/pkg/messaging"
+	"log"
 )
 
 const (
@@ -25,6 +26,11 @@ func receive(_ context.Context, msg *pubsub.Message) {
 	msg.Ack()
 }
 
+func notify(res *pubsub.PublishResult) {
+	id, _ := res.Get(context.Background())
+	log.Printf("Message with ID %s published successfully", id)
+}
+
 var process string
 
 func init() {
@@ -41,7 +47,12 @@ func main() {
 	}
 
 	if process == "publisher" {
-		pub, err := messaging.NewPublisher(project, topic)
+		cfg := &messaging.PublisherConfig{
+			Project: project,
+			Topic: topic,
+			Notifier: notify,
+		}
+		pub, err := messaging.NewPublisher(cfg)
 		panicOnErr(err)
 		pub.Publish(context.Background(), []byte("Hello world"))
 	}

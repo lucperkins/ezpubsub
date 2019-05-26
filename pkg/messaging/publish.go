@@ -3,42 +3,72 @@ package messaging
 import (
 	"cloud.google.com/go/pubsub"
 	"context"
+	"errors"
 	"log"
 )
 
-type Publisher struct {
-	topic    *pubsub.Topic
-	receiver chan *pubsub.PublishResult
+type (
+	notifier = func(*pubsub.PublishResult)
+
+	publisher struct {
+		t *pubsub.Topic
+		n notifier
+	}
+
+	PublisherConfig struct {
+		Project string
+		Topic string
+		Notifier notifier
+	}
+)
+
+func (c *PublisherConfig) validate() error {
+	if c.Project == "" {
+		return errors.New("no project specified")
+	}
+
+	if c.Topic == "" {
+		return errors.New("no t specified")
+	}
+
+	return nil
 }
 
-func NewPublisher(projectName, topicName string) (*Publisher, error) {
+func NewPublisher(config *PublisherConfig) (*publisher, error) {
 	ctx := context.Background()
 
-	client, err := newClient(projectName)
+	err := config.validate()
 	if err != nil {
 		return nil, err
 	}
 
-	topic, err := client.createTopic(ctx, topicName)
+	client, err := newClient(config.Project)
 	if err != nil {
 		return nil, err
 	}
 
-	rcv := make(chan *pubsub.PublishResult, 1)
+	topic, err := client.createTopic(ctx, config.Topic)
+	if err != nil {
+		return nil, err
+	}
 
-	return &Publisher{
-		topic:    topic,
-		receiver: rcv,
+	return &publisher{
+		t: topic,
+		n: config.Notifier,
 	}, nil
 }
 
-func (p *Publisher) Start() {
-	for {
-		res := <-p.receiver
-		s, err := res.Get(context.Background())
-		if err != nil {
-			log.Printf("Error: %s", err.Error())
-		}
-		log.Printf("Server ID: %s", s)
+func (p *publisher) Publish(ctx context.Context, data []byte) {
+	log.Printf("Publishing a message to t %s", p.t.String())
+
+	msg := &pubsub.Message{
+		Data: data,
 	}
+	res := p.t.Publish(ctx, msg)
+
+	if p.n != nil {
+		p.n(res)
+	}
+
+	defer p.t.Stop()
 }
