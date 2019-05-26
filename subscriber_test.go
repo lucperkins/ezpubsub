@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	subscription = "my-sub"
+	subscription = "ezpub-test-sub"
 )
 
 func listen(_ context.Context, _ *pubsub.Message) {}

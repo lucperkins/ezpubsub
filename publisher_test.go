@@ -6,8 +6,8 @@ import (
 )
 
 const (
-	project = "shear-dev"
-	topic = "shear-dev-test"
+	project = "ezpub"
+	topic = "ezpub-test-topic"
 )
 
 func TestPublisher(t *testing.T) {
