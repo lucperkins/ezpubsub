@@ -3,8 +3,8 @@ package main
 import (
 	"cloud.google.com/go/pubsub"
 	"context"
-	"fmt"
 	"github.com/lucperkins/ezpubsub"
+	"log"
 )
 
 func must(err error) {
@@ -19,7 +19,7 @@ func main() {
 		Topic:   "test",
 		Notifier: func(res *pubsub.PublishResult) {
 			id, _ := res.Get(context.Background())
-			fmt.Printf("Message %s processed\n", id)
+			log.Printf("Message with ID %s published\n", id)
 		},
 	}
 	pub, err := ezpubsub.NewPublisher(cfg)
