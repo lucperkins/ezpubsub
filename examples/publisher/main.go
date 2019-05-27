@@ -16,7 +16,7 @@ func must(err error) {
 func main() {
 	cfg := &ezpubsub.PublisherConfig{
 		Project: "test",
-		Topic: "test",
+		Topic:   "test",
 		Notifier: func(res *pubsub.PublishResult) {
 			id, _ := res.Get(context.Background())
 			fmt.Printf("Message %s processed\n", id)
