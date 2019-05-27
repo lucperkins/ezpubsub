@@ -13,11 +13,11 @@ type (
 	// A Listener function determines how each incoming Pub/Sub message is processed.
 	Listener = func(context.Context, *pubsub.Message)
 
-	// A function that determines how errors are handled
+	// A function that determines how errors are handled while listening for messages.
 	ErrorHandler = func(error)
 
 	// Subscribers subscribe to a specified Pub/Sub topic and process each incoming message in accordance with the
-	// supplied listener function.
+	// supplied Listener function.
 	Subscriber struct {
 		topic        *pubsub.Topic
 		subscription *pubsub.Subscription
@@ -25,7 +25,9 @@ type (
 		errorHandler ErrorHandler
 	}
 
-	// Subscriber configuration. All fields except Listener are mandatory.
+	// Subscriber configuration. A Project, Topic, Subscription, and Listener function are mandatory; errors are thrown
+	// if these are not provided. An ErrorHandler function is optional; if none is provided, errors are logged to
+	// stderr.
 	SubscriberConfig struct {
 		Project      string
 		Topic        string
@@ -55,15 +57,21 @@ func (c *SubscriberConfig) validate() error {
 	return nil
 }
 
+// The error handler that's applied if none is provided. Logs a simple error message to stderr.
 func defaultErrorHandler(err error) {
 	fmt.Fprintf(os.Stderr, "Publisher error: %s", err.Error())
 }
 
-// Start the Publisher. When started, the Publisher listens on its topic and applies its listener function to each
-// incoming message.
+// Start the Publisher. When started, the Publisher listens on its topic and applies the Listener function to each
+// incoming message and the ErrorHandler function to errors.
 func (s *Subscriber) Start() {
 	log.Printf("Starting a Subscriber on topic %s", s.topic.String())
 
+	s.listen()
+}
+
+// Listen for messages, applying the Listener function to incoming messages and the ErrorHandler function to errors.
+func (s *Subscriber) listen() {
 	ctx := context.Background()
 
 	if err := s.subscription.Receive(ctx, s.listener); err != nil {
@@ -71,7 +79,7 @@ func (s *Subscriber) Start() {
 	}
 }
 
-// Create a new Subscriber from a SubscriberConfig
+// Create a new Subscriber from a SubscriberConfig.
 func NewSubscriber(config *SubscriberConfig) (*Subscriber, error) {
 	err := config.validate()
 	if err != nil {
