@@ -6,6 +6,7 @@ package ezpubsub
 import (
 	"cloud.google.com/go/pubsub"
 	"context"
+	"google.golang.org/api/iterator"
 )
 
 type client struct {
@@ -42,6 +43,29 @@ func (c *client) createTopic(topicName string) (*pubsub.Topic, error) {
 	}
 
 	return topic, nil
+}
+
+func (c *client) listTopics() ([]string, error) {
+	ctx := context.Background()
+	ts := make([]string, 0)
+
+	it := c.client.Topics(ctx)
+
+	for {
+		topic, err := it.Next()
+
+		if err == iterator.Done {
+			break
+		}
+
+		if err != nil {
+			return nil, err
+		}
+
+		ts = append(ts, topic.String())
+	}
+
+	return ts, nil
 }
 
 func (c *client) createSubscription(subscriptionName string, topic *pubsub.Topic) (*pubsub.Subscription, error) {
