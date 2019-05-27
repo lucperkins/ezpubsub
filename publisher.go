@@ -77,6 +77,22 @@ func (p *Publisher) Publish(data []byte) {
 	}
 }
 
+func (p *Publisher) PublishBatchSync(payloads [][]byte) {
+	ctx := context.Background()
+	msgs := convertDataToMessages(payloads)
+
+	for _, msg := range msgs {
+		if p.n != nil {
+			res := p.t.Publish(ctx, msg)
+			p.n(res)
+			p.t.Stop()
+		} else {
+			p.t.Publish(ctx, msg)
+			p.t.Stop()
+		}
+	}
+}
+
 // Converts a slice of raw data payloads into a slice of Messages
 func convertDataToMessages(payloads [][]byte) []*pubsub.Message {
 	msgs := make([]*pubsub.Message, len(payloads))
