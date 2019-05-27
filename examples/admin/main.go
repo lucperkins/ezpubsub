@@ -12,10 +12,7 @@ func must(err error) {
 }
 
 func main() {
-	adminConfig := &ezpubsub.AdminConfig{
-		Project: "test",
-	}
-	admin, err := ezpubsub.NewAdmin(adminConfig)
+	admin, err := ezpubsub.NewAdmin("test")
 	must(err)
 
 	topics, err := admin.ListTopics()
