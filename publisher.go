@@ -1,27 +1,28 @@
 package ezpubsub
 
 import (
-	"cloud.google.com/go/pubsub"
 	"context"
 	"fmt"
 	"sync"
+
+	"cloud.google.com/go/pubsub"
 )
 
 type (
-	// `Publisher`s publish messages on a specified Pub/Sub t.
+	// Publishers publish messages on a specified Pub/Sub t.
 	Publisher struct {
 		sync.Mutex
 		t *pubsub.Topic
 	}
 
-	// Publisher configuration. All fields except `Notifier` are mandatory.
+	// Publisher configuration. All fields except Notifier are mandatory.
 	PublisherConfig struct {
-		Project  string
-		Topic    string
+		Project string
+		Topic   string
 	}
 )
 
-// Validate the `PublisherConfig`
+// Validate the PublisherConfig
 func (c *PublisherConfig) validate() error {
 	if c.Project == "" {
 		return ErrNoProjectSpecified
@@ -34,7 +35,7 @@ func (c *PublisherConfig) validate() error {
 	return nil
 }
 
-// Create a new `Publisher` from a `PublisherConfig`.
+// Create a new Publisher from a PublisherConfig.
 func NewPublisher(config *PublisherConfig) (*Publisher, error) {
 	err := config.validate()
 	if err != nil {
@@ -56,7 +57,7 @@ func NewPublisher(config *PublisherConfig) (*Publisher, error) {
 	}, nil
 }
 
-// Publish the specified `data` payload (as raw bytes) on the `Publisher`'s t.
+// Publish the specified data payload (as raw bytes) on the Publisher's topic.
 func (p *Publisher) Publish(data []byte) {
 	ctx := context.Background()
 	defer p.t.Stop()

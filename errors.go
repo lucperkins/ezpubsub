@@ -4,7 +4,7 @@ import "errors"
 
 var (
 	ErrNoProjectSpecified      = errors.New("no project specified")
-	ErrNoTopicSpecified        = errors.New("no t specified")
+	ErrNoTopicSpecified        = errors.New("no topic specified")
 	ErrNoSubscriptionSpecified = errors.New("no subscription specified")
-	ErrNoListenerSpecified     = errors.New("no Listener function specified")
+	ErrNoListenerSpecified     = errors.New("no listener function specified")
 )
