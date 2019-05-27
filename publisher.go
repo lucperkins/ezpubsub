@@ -77,6 +77,7 @@ func (p *Publisher) Publish(data []byte) {
 	}
 }
 
+// Synchronously publish a batch of message payloads, preserving message order.
 func (p *Publisher) PublishBatchSync(payloads [][]byte) {
 	ctx := context.Background()
 	msgs := convertDataToMessages(payloads)
