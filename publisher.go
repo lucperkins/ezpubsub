@@ -1,24 +1,26 @@
 package ezpubsub
 
 import (
+	"cloud.google.com/go/pubsub"
 	"context"
 	"fmt"
-	"sync"
-
-	"cloud.google.com/go/pubsub"
 )
 
 type (
+	// A function that specifies what happens when a message is published.
+	Notifier = func(*pubsub.PublishResult)
+
 	// Publishers publish messages on a specified Pub/Sub t.
 	Publisher struct {
-		sync.Mutex
 		t *pubsub.Topic
+		n Notifier
 	}
 
 	// Publisher configuration. All fields except Notifier are mandatory.
 	PublisherConfig struct {
-		Project string
-		Topic   string
+		Project  string
+		Topic    string
+		Notifier Notifier
 	}
 )
 
@@ -54,6 +56,7 @@ func NewPublisher(config *PublisherConfig) (*Publisher, error) {
 
 	return &Publisher{
 		t: topic,
+		n: config.Notifier,
 	}, nil
 }
 
@@ -65,7 +68,13 @@ func (p *Publisher) Publish(data []byte) {
 	msg := &pubsub.Message{
 		Data: data,
 	}
-	p.t.Publish(ctx, msg)
+
+	if p.n != nil {
+		res := p.t.Publish(ctx, msg)
+		p.n(res)
+	} else {
+		p.t.Publish(ctx, msg)
+	}
 }
 
 // Converts a slice of raw data payloads into a slice of Messages
