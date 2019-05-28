@@ -13,6 +13,7 @@ type client struct {
 	client *pubsub.Client
 }
 
+// Creates a new Pub/Sub client or throws an error.
 func newClient(project string) (*client, error) {
 	ctx := context.Background()
 	cl, err := pubsub.NewClient(ctx, project)
@@ -26,6 +27,7 @@ func newClient(project string) (*client, error) {
 	}, nil
 }
 
+// Creates a topic if it doesn't exist or returns a topic if it already exists.
 func (c *client) createTopic(topicName string) (*pubsub.Topic, error) {
 	ctx := context.Background()
 
@@ -45,6 +47,7 @@ func (c *client) createTopic(topicName string) (*pubsub.Topic, error) {
 	return topic, nil
 }
 
+// Lists all topics associated with a project.
 func (c *client) listTopics() ([]string, error) {
 	ctx := context.Background()
 	ts := make([]string, 0)
@@ -68,6 +71,7 @@ func (c *client) listTopics() ([]string, error) {
 	return ts, nil
 }
 
+// Creates a subscription on a topic if one doesn't exist or returns the existing subscription.
 func (c *client) createSubscription(subscriptionName string, topic *pubsub.Topic) (*pubsub.Subscription, error) {
 	ctx := context.Background()
 
