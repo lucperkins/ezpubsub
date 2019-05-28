@@ -51,7 +51,7 @@ func main() {
 
 ## Publishers
 
-**Publishers** publish messages on the specified topic and handle success events according to the logic specified in the [`Notifier`](https://godoc.org/github.com/lucperkins/ezpubsub#Notifier) function.
+**Publishers** publish messages on the specified topic and handle publishing results according to the logic specified in the [`Notifier`](https://godoc.org/github.com/lucperkins/ezpubsub#Notifier) function.
 
 ```go
 import (
