@@ -18,7 +18,7 @@ func main() {
 		Topic:        "test",
 		Subscription: "test",
 		Listener: func(msg *pubsub.Message) {
-			log.Printf("Message received: %s\n", string(msg.Data))
+			log.Printf("Message received: (id: %s, payload: %s)\n", msg.ID, string(msg.Data))
 
 			msg.Ack()
 		},

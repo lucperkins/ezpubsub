@@ -3,15 +3,13 @@ package ezpubsub
 import (
 	"cloud.google.com/go/pubsub"
 	"context"
+	"fmt"
 	"log"
 )
 
 type (
 	// A Listener function determines how each incoming Pub/Sub message is processed.
 	Listener = func(*pubsub.Message)
-
-	// A function that determines how errors are handled while listening for messages.
-	ErrorHandler = func(error)
 
 	// Subscribers subscribe to a specified Pub/Sub topic and process each incoming message in accordance with the
 	// supplied Listener function.
@@ -36,7 +34,7 @@ type (
 )
 
 var SimpleListener = func(msg *pubsub.Message) {
-	log.Printf("Message received: (id: %s, payload: %s)", msg.ID, string(msg.Data))
+	fmt.Printf("Message received: (id: %s, payload: %s)", msg.ID, string(msg.Data))
 
 	msg.Ack()
 }
@@ -55,15 +53,15 @@ func (c *SubscriberConfig) validate() error {
 		c.Listener = SimpleListener
 	}
 	if c.ErrorHandler == nil {
-		c.ErrorHandler = defaultErrorHandler
+		c.ErrorHandler = defaultSubscriberErrorHandler
 	}
 
 	return nil
 }
 
 // The error handler that's applied if none is provided. Logs a simple error message to stderr.
-func defaultErrorHandler(err error) {
-	log.Printf("Publisher error: %v", err)
+func defaultSubscriberErrorHandler(err error) {
+	log.Printf("Subscriber error: %v", err)
 }
 
 // Start the Publisher. When started, the Publisher listens on its topic and applies the Listener function to each

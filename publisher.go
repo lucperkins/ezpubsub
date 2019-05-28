@@ -3,6 +3,8 @@ package ezpubsub
 import (
 	"cloud.google.com/go/pubsub"
 	"context"
+	"encoding/json"
+	"fmt"
 )
 
 type (
@@ -28,7 +30,6 @@ func (c *PublisherConfig) validate() error {
 	if c.Project == "" {
 		return ErrNoProjectSpecified
 	}
-
 	if c.Topic == "" {
 		return ErrNoTopicSpecified
 	}
@@ -59,10 +60,10 @@ func NewPublisher(config *PublisherConfig) (*Publisher, error) {
 	}, nil
 }
 
-// Publish the specified data payload (as raw bytes) on the Publisher's topic.
+// Publish the specified payload on the Publisher's topic.
 func (p *Publisher) Publish(data []byte) {
 	ctx := context.Background()
-	defer p.t.Stop()
+	//defer p.t.Stop()
 
 	msg := &pubsub.Message{
 		Data: data,
@@ -74,6 +75,23 @@ func (p *Publisher) Publish(data []byte) {
 	} else {
 		p.t.Publish(ctx, msg)
 	}
+}
+
+// Publish a JSON-serializable object on the Publisher's topic and throw an error if JSON marshalling is unsuccessful.
+func (p *Publisher) PublishObject(obj interface{}) error {
+	bs, err := json.Marshal(obj)
+	if err != nil {
+		return err
+	}
+
+	fmt.Println(string(bs))
+	p.Publish(bs)
+	return nil
+}
+
+// Publish a string on the Publisher's topic.
+func (p *Publisher) PublishString(s string) {
+	p.Publish([]byte(s))
 }
 
 // Synchronously publish a batch of message payloads, preserving message order.
