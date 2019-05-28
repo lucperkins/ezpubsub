@@ -23,10 +23,10 @@ func main() {
 	db := NewDB()
 
 	cfg := &ezpubsub.SubscriberConfig{
-		Project: "test",
-		Topic: "test",
+		Project:      "test",
+		Topic:        "test",
 		Subscription: "my-sub",
-		Listener: saveToDb(db),
+		Listener:     saveToDb(db),
 	}
 	sub, err := ezpubsub.NewSubscriber(cfg)
 	must(err)
