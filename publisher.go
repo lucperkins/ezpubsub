@@ -16,26 +16,7 @@ type (
 		t *pubsub.Topic
 		n Notifier
 	}
-
-	// Publisher configuration. All fields except Notifier are mandatory.
-	PublisherConfig struct {
-		Project  string
-		Topic    string
-		Notifier Notifier
-	}
 )
-
-// Validate the PublisherConfig
-func (c *PublisherConfig) validate() error {
-	if c.Project == "" {
-		return ErrNoProjectSpecified
-	}
-	if c.Topic == "" {
-		return ErrNoTopicSpecified
-	}
-
-	return nil
-}
 
 // Create a new Publisher from a PublisherConfig.
 func NewPublisher(config *PublisherConfig) (*Publisher, error) {

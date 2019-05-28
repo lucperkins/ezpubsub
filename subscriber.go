@@ -19,50 +19,21 @@ type (
 		listener     Listener
 		errorHandler ErrorHandler
 	}
-
-	// Subscriber configuration. A Project, Topic, and Subscription are mandatory; errors are thrown if these are not
-	// provided. A Listener function is optional; if none is provided, a SimpleListener is used that for each message
-	// received logs a simple string and acks the message. An ErrorHandler function is also optional; if none is
-	// provided, errors are logged to stderr.
-	SubscriberConfig struct {
-		Project      string
-		Topic        string
-		Subscription string
-		Listener     Listener
-		ErrorHandler ErrorHandler
-	}
 )
 
-var SimpleListener = func(msg *pubsub.Message) {
-	fmt.Printf("Message received: (id: %s, payload: %s)", msg.ID, string(msg.Data))
+var (
+	// The listener used by the Subscriber when no Listener function is specified
+	defaultListener = func(msg *pubsub.Message) {
+		fmt.Printf("Message received: (id: %s, payload: %s)", msg.ID, string(msg.Data))
 
-	msg.Ack()
-}
-
-func (c *SubscriberConfig) validate() error {
-	if c.Project == "" {
-		return ErrNoProjectSpecified
-	}
-	if c.Topic == "" {
-		return ErrNoTopicSpecified
-	}
-	if c.Subscription == "" {
-		return ErrNoSubscriptionSpecified
-	}
-	if c.Listener == nil {
-		c.Listener = SimpleListener
-	}
-	if c.ErrorHandler == nil {
-		c.ErrorHandler = defaultSubscriberErrorHandler
+		msg.Ack()
 	}
 
-	return nil
-}
-
-// The error handler that's applied if none is provided. Logs a simple error message to stderr.
-func defaultSubscriberErrorHandler(err error) {
-	log.Printf("Subscriber error: %v", err)
-}
+	// The error handler that's applied if none is provided. Logs a simple error message to stderr.
+	defaultErrorHandler = func(err error) {
+		log.Printf("Subscriber error: %v", err)
+	}
+)
 
 // Start the Publisher. When started, the Publisher listens on its topic and applies the Listener function to each
 // incoming message and the ErrorHandler function to errors.
