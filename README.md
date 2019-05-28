@@ -98,3 +98,28 @@ func main() {
         }
 }
 ```
+
+## Admin
+
+ezpubsub offers an [`Admin`](https://godoc.org/github.com/lucperkins/ezpubsub#Admin) type that enables you to perform basic administrative tasks. At the moment, `Admin` supports listing all topics in a project. More functionality will be added later.
+
+```go
+func main() {
+        project := "my-project"
+        admin, err := ezpubsub.NewAdmin(project)
+        if err != nil {
+                // handle error
+        }
+
+        // List topics
+        topics, err := admin.ListTopics()
+        if err != nil {
+                // handle error
+        }
+
+        fmt.Println("Listing topics:")
+        for _, topic := range topics {
+                fmt.Println(topic)
+        }
+}
+```
