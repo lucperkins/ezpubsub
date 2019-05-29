@@ -3,6 +3,7 @@ package ezpubsub
 import (
 	"fmt"
 	"github.com/stretchr/testify/assert"
+	"github.com/thanhpk/randstr"
 	"testing"
 )
 
@@ -21,7 +22,8 @@ func TestAdminInterface(t *testing.T) {
 	is.NoError(err)
 	is.NotNil(subscriptions)
 
-	exists, err := admin.TopicExists("some-non-existing-topic")
+	randTopic := randstr.String(25)
+	exists, err := admin.TopicExists(randTopic)
 	is.NoError(err)
 	is.False(exists)
 }
