@@ -105,7 +105,6 @@ func (c *client) listSubscriptions() ([]string, error) {
 	return ss, nil
 }
 
-
 // Creates a subscription on a topic if one doesn't exist or returns the existing subscription.
 func (c *client) createSubscription(subscriptionName string, topic *pubsub.Topic) (*pubsub.Subscription, error) {
 	ctx := context.Background()

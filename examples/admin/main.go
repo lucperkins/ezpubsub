@@ -23,7 +23,7 @@ func main() {
 	must(err)
 
 	printList("Displaying topics:", topics, "topics")
-	
+
 	subscriptions, err := admin.ListSubscriptions()
 	must(err)
 
