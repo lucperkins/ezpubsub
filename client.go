@@ -106,7 +106,7 @@ func (c *client) listSubscriptions() ([]string, error) {
 }
 
 // Creates a subscription on a topic if one doesn't exist or returns the existing subscription.
-func (c *client) createSubscription(subscriptionName string, topic *pubsub.Topic) (*pubsub.Subscription, error) {
+func (c *client) createSubscription(subscriptionName string, pushEndpoint string, topic *pubsub.Topic) (*pubsub.Subscription, error) {
 	ctx := context.Background()
 
 	s := c.client.Subscription(subscriptionName)
@@ -118,6 +118,14 @@ func (c *client) createSubscription(subscriptionName string, topic *pubsub.Topic
 	if !exists {
 		cfg := pubsub.SubscriptionConfig{
 			Topic: topic,
+		}
+
+		if pushEndpoint != "" {
+			pushConfig := pubsub.PushConfig{
+				Endpoint: pushEndpoint,
+			}
+
+			cfg.PushConfig = pushConfig
 		}
 
 		s, err = c.client.CreateSubscription(ctx, subscriptionName, cfg)

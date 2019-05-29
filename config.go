@@ -16,6 +16,7 @@ type (
 		Project      string
 		Topic        string
 		Subscription string
+		PushEndpoint string
 		Listener     Listener
 		ErrorHandler ErrorHandler
 	}

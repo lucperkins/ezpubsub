@@ -73,7 +73,7 @@ func NewSubscriber(config *SubscriberConfig) (*Subscriber, error) {
 		return nil, err
 	}
 
-	sub, err := client.createSubscription(config.Subscription, topic)
+	sub, err := client.createSubscription(config.Subscription, config.PushEndpoint, topic)
 	if err != nil {
 		return nil, err
 	}
