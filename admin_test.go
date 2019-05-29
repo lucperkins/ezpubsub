@@ -16,6 +16,14 @@ func TestAdminInterface(t *testing.T) {
 	topics, err := admin.ListTopics()
 	is.NoError(err)
 	is.NotNil(topics)
+
+	subscriptions, err := admin.ListSubscriptions()
+	is.NoError(err)
+	is.NotNil(subscriptions)
+
+	exists, err := admin.TopicExists("some-non-existing-topic")
+	is.NoError(err)
+	is.False(exists)
 }
 
 func ExampleAdmin() {
