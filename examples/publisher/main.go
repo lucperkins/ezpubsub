@@ -15,12 +15,6 @@ func must(err error) {
 	}
 }
 
-type event struct {
-	Id        int64             `json:"id"`
-	Timestamp int64             `json:"timestamp"`
-	Data      map[string]string `json:"data"`
-}
-
 func main() {
 	cfg := &ezpubsub.PublisherConfig{
 		Project: "test",
@@ -36,8 +30,12 @@ func main() {
 	msgs := [][]byte{[]byte("One"), []byte("Two"), []byte("Three")}
 	pub.PublishBatchSync(msgs)
 
-	userEvent := event{
-		Id:        543678,
+	userEvent := struct {
+		ID        int64             `json:"id"`
+		Timestamp int64             `json:"timestamp"`
+		Data      map[string]string `json:"data"`
+	}{
+		ID:        543678,
 		Timestamp: time.Now().Unix(),
 		Data: map[string]string{
 			"user":   "tonydanza123",
