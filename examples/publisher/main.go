@@ -47,8 +47,5 @@ func main() {
 	must(err)
 
 	s := fmt.Sprintf("The time now is %s", time.Now().Format("3:04PM"))
-
-	fmt.Printf("Publishing: %s\n", s)
-
 	pub.PublishString(s)
 }
