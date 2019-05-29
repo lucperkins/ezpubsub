@@ -4,7 +4,6 @@ import (
 	"cloud.google.com/go/pubsub"
 	"context"
 	"encoding/json"
-	"fmt"
 )
 
 type (
@@ -65,7 +64,6 @@ func (p *Publisher) PublishObject(obj interface{}) error {
 		return err
 	}
 
-	fmt.Println(string(bs))
 	p.Publish(bs)
 	return nil
 }
