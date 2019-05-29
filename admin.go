@@ -7,11 +7,6 @@ type (
 	}
 )
 
-// List all current topics under the specified project.
-func (a *Admin) ListTopics() ([]string, error) {
-	return a.client.listTopics()
-}
-
 // Create a new Admin, specifying the Google Cloud project name.
 func NewAdmin(project string) (*Admin, error) {
 	client, err := newClient(project)
@@ -22,4 +17,19 @@ func NewAdmin(project string) (*Admin, error) {
 	return &Admin{
 		client: client,
 	}, nil
+}
+
+// List all current topics under the specified project.
+func (a *Admin) ListTopics() ([]string, error) {
+	return a.client.listTopics()
+}
+
+// Checks is a topic already exists.
+func (a *Admin) TopicExists(topicName string) (bool, error) {
+	return a.client.topicExists(topicName)
+}
+
+// Lists all current subscriptions.
+func (a *Admin) ListSubscriptions() ([]string, error) {
+	return a.client.listSubscriptions()
 }

@@ -29,10 +29,10 @@ func newClient(project string) (*client, error) {
 
 // Creates a topic if it doesn't exist or returns a topic if it already exists.
 func (c *client) createTopic(topicName string) (*pubsub.Topic, error) {
+	var topic *pubsub.Topic
 	ctx := context.Background()
 
-	topic := c.client.Topic(topicName)
-	exists, err := topic.Exists(ctx)
+	exists, err := c.topicExists(topicName)
 	if err != nil {
 		return nil, err
 	}
@@ -42,9 +42,19 @@ func (c *client) createTopic(topicName string) (*pubsub.Topic, error) {
 		if err != nil {
 			return nil, err
 		}
+	} else {
+		topic = c.client.Topic(topicName)
 	}
 
 	return topic, nil
+}
+
+// Checks if the topic already exists.
+func (c *client) topicExists(topicName string) (bool, error) {
+	ctx := context.Background()
+	topic := c.client.Topic(topicName)
+
+	return topic.Exists(ctx)
 }
 
 // Lists all topics associated with a project.
@@ -70,6 +80,31 @@ func (c *client) listTopics() ([]string, error) {
 
 	return ts, nil
 }
+
+// Lists all current subscriptions
+func (c *client) listSubscriptions() ([]string, error) {
+	ctx := context.Background()
+	ss := make([]string, 0)
+
+	it := c.client.Subscriptions(ctx)
+
+	for {
+		sub, err := it.Next()
+
+		if err == iterator.Done {
+			break
+		}
+
+		if err != nil {
+			return nil, err
+		}
+
+		ss = append(ss, sub.String())
+	}
+
+	return ss, nil
+}
+
 
 // Creates a subscription on a topic if one doesn't exist or returns the existing subscription.
 func (c *client) createSubscription(subscriptionName string, topic *pubsub.Topic) (*pubsub.Subscription, error) {
