@@ -22,7 +22,7 @@ func TestAdminInterface(t *testing.T) {
 	is.NoError(err)
 	is.NotNil(subscriptions)
 
-	randTopic := randstr.String(25)
+	randTopic := randstr.String(10)
 	exists, err := admin.TopicExists(randTopic)
 	is.NoError(err)
 	is.False(exists)
