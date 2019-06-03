@@ -136,3 +136,8 @@ func (c *client) createSubscription(subscriptionName string, pushEndpoint string
 
 	return s, nil
 }
+
+func (c *client) deleteSubscription(subscription string) error {
+	ctx := context.Background()
+	return c.client.Subscription(subscription).Delete(ctx)
+}

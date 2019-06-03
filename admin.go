@@ -33,3 +33,8 @@ func (a *Admin) TopicExists(topicName string) (bool, error) {
 func (a *Admin) ListSubscriptions() ([]string, error) {
 	return a.client.listSubscriptions()
 }
+
+// Deletes a specified subscription.
+func (a *Admin) DeleteSubscription(subscription string) error {
+	return a.client.deleteSubscription(subscription)
+}
