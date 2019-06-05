@@ -23,7 +23,9 @@ func TestAdminInterface(t *testing.T) {
 	is.NotNil(admin)
 	is.NotNil(admin.client)
 
-	is.NoError(admin.DeleteSubscriptions(testSubscription))
+	subExists, err := admin.SubscriptionExists(testSubscription)
+	is.NoError(err)
+	is.False(subExists)
 
 	topics, err := admin.ListTopics()
 	is.NoError(err)
