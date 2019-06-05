@@ -38,7 +38,7 @@ func NewPublisher(config *PublisherConfig) (*Publisher, error) {
 	return &Publisher{
 		topic:           topic,
 		errorHandler:    config.ErrorHandler,
-		serverIdHandler: config.ServerIDHandler,
+		serverIdHandler: config.ServerIdHandler,
 	}, nil
 }
 

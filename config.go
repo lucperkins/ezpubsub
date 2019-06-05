@@ -6,7 +6,7 @@ type (
 		Project         string
 		Topic           string
 		ErrorHandler    ErrorHandler
-		ServerIDHandler ServerIdHandler
+		ServerIdHandler ServerIdHandler
 	}
 
 	// Subscriber configuration. A Project, Topic, and Subscription are mandatory; errors are thrown if these are not

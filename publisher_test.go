@@ -41,3 +41,27 @@ func ExamplePublisher() {
 	msg := []byte("Hello world")
 	publisher.Publish(msg)
 }
+
+func ExamplePublisherConfig() {
+	serverIdHandler := func(id string) {
+		log.Printf("Message with ID %s published", id)
+	}
+
+	errHandler := func(err error) {
+		log.Printf("Publisher error: %v", err)
+	}
+
+	publisherConfig := &PublisherConfig{
+		Project:         "some-project",
+		Topic:           "some-topic",
+		ServerIdHandler: serverIdHandler,
+		ErrorHandler:    errHandler,
+	}
+
+	publisher, err := NewPublisher(publisherConfig)
+	if err != nil {
+		// Handler error
+	}
+
+	publisher.Publish([]byte("Hello world"))
+}

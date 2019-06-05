@@ -20,7 +20,7 @@ func main() {
 		ErrorHandler: func(err error) {
 			log.Printf("Publisher error: %v", err)
 		},
-		ServerIDHandler: func(serverId string) {
+		ServerIdHandler: func(serverId string) {
 			log.Printf("Message with ID %s published", serverId)
 		},
 	}
