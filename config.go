@@ -3,9 +3,10 @@ package ezpubsub
 type (
 	// Publisher configuration. All fields except Notifier are mandatory.
 	PublisherConfig struct {
-		Project  string
-		Topic    string
-		Notifier Notifier
+		Project         string
+		Topic           string
+		ErrorHandler    ErrorHandler
+		ServerIDHandler ServerIdHandler
 	}
 
 	// Subscriber configuration. A Project, Topic, and Subscription are mandatory; errors are thrown if these are not

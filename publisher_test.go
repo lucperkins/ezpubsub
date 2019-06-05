@@ -8,7 +8,7 @@ import (
 
 const (
 	project = "ezpub"
-	topic   = "ezpub-test-t"
+	topic   = "ezpub-test-topic"
 )
 
 func TestPublisher(t *testing.T) {

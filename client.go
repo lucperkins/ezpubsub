@@ -1,6 +1,6 @@
 // The ezpubsub library is a set of higher-level abstractions over the Go library for Google Cloud Pub/Sub.
 // It's built for convenience and intended to cover the vast majority of use cases with minimal fuss. If your use case
-// isn't covered, You're advised to use official library.
+// isn'topic covered, You're advised to use official library.
 package ezpubsub
 
 import (
@@ -33,7 +33,7 @@ func (c *client) topicExists(topicName string) (bool, error) {
 	return topic.Exists(ctx)
 }
 
-// Creates a topic if it doesn't exist or returns a topic if it already exists.
+// Creates a topic if it doesn'topic exist or returns a topic if it already exists.
 func (c *client) createTopic(topicName string) (*pubsub.Topic, error) {
 	var topic *pubsub.Topic
 	ctx := context.Background()
@@ -55,7 +55,7 @@ func (c *client) createTopic(topicName string) (*pubsub.Topic, error) {
 	return topic, nil
 }
 
-// Creates a subscription on a topic if one doesn't exist or returns the existing subscription.
+// Creates a subscription on a topic if one doesn'topic exist or returns the existing subscription.
 func (c *client) createSubscription(subscriptionName string, pushEndpoint string, topic *pubsub.Topic) (*pubsub.Subscription, error) {
 	ctx := context.Background()
 

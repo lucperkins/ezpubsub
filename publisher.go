@@ -7,13 +7,14 @@ import (
 )
 
 type (
-	// A function that specifies what happens when a message is published.
-	Notifier = func(*pubsub.PublishResult)
+	// A handler for the server ID returned when publishing a message.
+	ServerIdHandler = func(string)
 
-	// Publishers publish messages on a specified Pub/Sub t.
+	// Publishers publish messages on a specified Pub/Sub topic.
 	Publisher struct {
-		t *pubsub.Topic
-		n Notifier
+		topic           *pubsub.Topic
+		errorHandler    ErrorHandler
+		serverIdHandler ServerIdHandler
 	}
 )
 
@@ -35,26 +36,35 @@ func NewPublisher(config *PublisherConfig) (*Publisher, error) {
 	}
 
 	return &Publisher{
-		t: topic,
-		n: config.Notifier,
+		topic:           topic,
+		errorHandler:    config.ErrorHandler,
+		serverIdHandler: config.ServerIDHandler,
 	}, nil
 }
 
 // Publish the specified payload on the Publisher's topic.
 func (p *Publisher) Publish(data []byte) {
 	ctx := context.Background()
-	//defer p.t.Stop()
 
 	msg := &pubsub.Message{
 		Data: data,
 	}
 
-	if p.n != nil {
-		res := p.t.Publish(ctx, msg)
-		p.n(res)
-	} else {
-		p.t.Publish(ctx, msg)
+	res := p.topic.Publish(ctx, msg)
+
+	p.handleResponse(ctx, res)
+}
+
+func (p *Publisher) handleResponse(ctx context.Context, res *pubsub.PublishResult) {
+	id, err := res.Get(ctx)
+	if err != nil && p.errorHandler != nil {
+		p.errorHandler(err)
 	}
+
+	if p.serverIdHandler != nil {
+		p.serverIdHandler(id)
+	}
+
 }
 
 // Publish a JSON-serializable object on the Publisher's topic and throw an error if JSON marshalling is unsuccessful.
@@ -75,16 +85,10 @@ func (p *Publisher) PublishString(s string) {
 
 // Synchronously publish a batch of message payloads, preserving message order.
 func (p *Publisher) PublishBatchSync(payloads [][]byte) {
-	ctx := context.Background()
 	msgs := convertDataToMessages(payloads)
 
 	for _, msg := range msgs {
-		if p.n != nil {
-			res := p.t.Publish(ctx, msg)
-			p.n(res)
-		} else {
-			p.t.Publish(ctx, msg)
-		}
+		p.Publish(msg.Data)
 	}
 }
 

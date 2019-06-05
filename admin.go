@@ -53,6 +53,18 @@ func (a *Admin) TopicExists(topicName string) (bool, error) {
 	return a.client.topicExists(topicName)
 }
 
+// Deletes the specified topic.
+func (a *Admin) DeleteTopic(topicName string) error {
+	ctx := context.Background()
+	return a.client.client.Topic(topicName).Delete(ctx)
+}
+
+// Checks if a subscription exists.
+func (a *Admin) SubscriptionExists(subscriptionName string) (bool, error) {
+	ctx := context.Background()
+	return a.client.client.Subscription(subscriptionName).Exists(ctx)
+}
+
 // Lists all current subscriptions.
 func (a *Admin) ListSubscriptions() ([]string, error) {
 	ctx := context.Background()
@@ -81,4 +93,15 @@ func (a *Admin) ListSubscriptions() ([]string, error) {
 func (a *Admin) DeleteSubscription(subscription string) error {
 	ctx := context.Background()
 	return a.client.client.Subscription(subscription).Delete(ctx)
+}
+
+// Deletes multiple subscriptions.
+func (a *Admin) DeleteSubscriptions(subscriptions ...string) error {
+	for _, sub := range subscriptions {
+		if err := a.DeleteSubscription(sub); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }

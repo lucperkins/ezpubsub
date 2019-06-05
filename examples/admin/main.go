@@ -6,7 +6,9 @@ import (
 )
 
 const (
-	topicName = "test"
+	projectName      = "test"
+	topicName        = "test"
+	subscriptionName = "test"
 )
 
 func must(err error) {
@@ -16,7 +18,7 @@ func must(err error) {
 }
 
 func main() {
-	admin, err := ezpubsub.NewAdmin(topicName)
+	admin, err := ezpubsub.NewAdmin(projectName)
 	must(err)
 
 	topics, err := admin.ListTopics()
@@ -32,6 +34,19 @@ func main() {
 	topicExists, err := admin.TopicExists(topicName)
 	must(err)
 	fmt.Printf("Topic %s already exists: %t\n", topicName, topicExists)
+
+	if topicExists {
+		must(admin.DeleteTopic(topicName))
+		fmt.Printf("Topic %s deleted\n", topicName)
+	}
+
+	subscriptionExists, err := admin.SubscriptionExists(subscriptionName)
+	must(err)
+
+	if subscriptionExists {
+		must(admin.DeleteSubscription(subscriptionName))
+		fmt.Printf("Subscription %s deleted\n", subscriptionName)
+	}
 }
 
 func printList(msg string, list []string, listName string) {

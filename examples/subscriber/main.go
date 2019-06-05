@@ -17,7 +17,6 @@ func main() {
 		Project:      "test",
 		Topic:        "test",
 		Subscription: "test",
-		PushEndpoint: "http://localhost:1212",
 		Listener: func(msg *pubsub.Message) {
 			log.Printf("Message received: (id: %s, payload: %s)\n", msg.ID, string(msg.Data))
 

@@ -1,8 +1,6 @@
 package main
 
 import (
-	"cloud.google.com/go/pubsub"
-	"context"
 	"fmt"
 	"github.com/lucperkins/ezpubsub"
 	"log"
@@ -19,9 +17,11 @@ func main() {
 	cfg := &ezpubsub.PublisherConfig{
 		Project: "test",
 		Topic:   "test",
-		Notifier: func(res *pubsub.PublishResult) {
-			id, _ := res.Get(context.Background())
-			log.Printf("Message published: (id: %s)\n", id)
+		ErrorHandler: func(err error) {
+			log.Printf("Publisher error: %v", err)
+		},
+		ServerIDHandler: func(serverId string) {
+			log.Printf("Message with ID %s published", serverId)
 		},
 	}
 	pub, err := ezpubsub.NewPublisher(cfg)
