@@ -60,7 +60,7 @@ func ExamplePublisherConfig() {
 
 	publisher, err := NewPublisher(publisherConfig)
 	if err != nil {
-		// Handler error
+		log.Fatalf("Publisher creation error: %s", err)
 	}
 
 	publisher.Publish([]byte("Hello world"))

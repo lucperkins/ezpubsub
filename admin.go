@@ -33,6 +33,7 @@ func (a *Admin) ListTopics() ([]string, error) {
 
 	return topicIteratorToList(it)
 }
+
 // Checks is a topic already exists.
 func (a *Admin) TopicExists(topicName string) (bool, error) {
 	return a.client.topicExists(topicName)
