@@ -33,7 +33,7 @@ func (c *client) topicExists(topicName string) (bool, error) {
 	return topic.Exists(ctx)
 }
 
-// Creates a topic if it doesn'topic exist or returns a topic if it already exists.
+// Creates a topic if it doesn't exist or returns a topic if it already exists.
 func (c *client) createTopic(topicName string) (*pubsub.Topic, error) {
 	var topic *pubsub.Topic
 	ctx := context.Background()
@@ -55,7 +55,7 @@ func (c *client) createTopic(topicName string) (*pubsub.Topic, error) {
 	return topic, nil
 }
 
-// Creates a subscription on a topic if one doesn'topic exist or returns the existing subscription.
+// Creates a subscription on a topic if one doesn't exist or returns the existing subscription.
 func (c *client) createSubscription(subscriptionName string, pushEndpoint string, topic *pubsub.Topic) (*pubsub.Subscription, error) {
 	ctx := context.Background()
 

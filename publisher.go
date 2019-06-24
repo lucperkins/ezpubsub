@@ -20,8 +20,7 @@ type (
 
 // Create a new Publisher from a PublisherConfig.
 func NewPublisher(config *PublisherConfig) (*Publisher, error) {
-	err := config.validate()
-	if err != nil {
+	if err := config.validate(); err != nil {
 		return nil, err
 	}
 

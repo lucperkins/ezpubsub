@@ -1,6 +1,7 @@
 package ezpubsub
 
 import (
+	"cloud.google.com/go/pubsub"
 	"context"
 	"google.golang.org/api/iterator"
 )
@@ -27,27 +28,11 @@ func NewAdmin(project string) (*Admin, error) {
 // List all current topics under the specified project.
 func (a *Admin) ListTopics() ([]string, error) {
 	ctx := context.Background()
-	ts := make([]string, 0)
 
 	it := a.client.client.Topics(ctx)
 
-	for {
-		topic, err := it.Next()
-
-		if err == iterator.Done {
-			break
-		}
-
-		if err != nil {
-			return nil, err
-		}
-
-		ts = append(ts, topic.String())
-	}
-
-	return ts, nil
+	return topicIteratorToList(it)
 }
-
 // Checks is a topic already exists.
 func (a *Admin) TopicExists(topicName string) (bool, error) {
 	return a.client.topicExists(topicName)
@@ -68,25 +53,10 @@ func (a *Admin) SubscriptionExists(subscriptionName string) (bool, error) {
 // Lists all current subscriptions.
 func (a *Admin) ListSubscriptions() ([]string, error) {
 	ctx := context.Background()
-	ss := make([]string, 0)
 
 	it := a.client.client.Subscriptions(ctx)
 
-	for {
-		sub, err := it.Next()
-
-		if err == iterator.Done {
-			break
-		}
-
-		if err != nil {
-			return nil, err
-		}
-
-		ss = append(ss, sub.String())
-	}
-
-	return ss, nil
+	return subscriptionIteratorToList(it)
 }
 
 // Deletes a specified subscription.
@@ -104,4 +74,44 @@ func (a *Admin) DeleteSubscriptions(subscriptions ...string) error {
 	}
 
 	return nil
+}
+
+func topicIteratorToList(it *pubsub.TopicIterator) ([]string, error) {
+	ts := make([]string, 0)
+
+	for {
+		topic, err := it.Next()
+
+		if err == iterator.Done {
+			break
+		}
+
+		if err != nil {
+			return nil, err
+		}
+
+		ts = append(ts, topic.String())
+	}
+
+	return ts, nil
+}
+
+func subscriptionIteratorToList(it *pubsub.SubscriptionIterator) ([]string, error) {
+	ts := make([]string, 0)
+
+	for {
+		sub, err := it.Next()
+
+		if err == iterator.Done {
+			break
+		}
+
+		if err != nil {
+			return nil, err
+		}
+
+		ts = append(ts, sub.String())
+	}
+
+	return ts, nil
 }

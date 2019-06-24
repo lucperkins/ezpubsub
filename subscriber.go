@@ -58,8 +58,7 @@ func (s *Subscriber) listen() {
 
 // Create a new Subscriber from a SubscriberConfig.
 func NewSubscriber(config *SubscriberConfig) (*Subscriber, error) {
-	err := config.validate()
-	if err != nil {
+	if err := config.validate(); err != nil {
 		return nil, err
 	}
 
